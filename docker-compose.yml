@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7-jammy
+    container_name: concerts-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ConcertsAppDB
+    volumes:
+      - mongodb_data:/data/db
+      - ./seed.js:/docker-entrypoint-initdb.d/seed.js:ro
+    networks:
+      - concerts-network
+
+  # Express.js Application
+  app:
+    build: .
+    container_name: concerts-app
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/ConcertsAppDB
+    depends_on:
+      - mongodb
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - concerts-network
+    command: npm start
+
+  # MongoDB Admin Interface (optional)
+  mongo-express:
+    image: mongo-express:1.0.0-alpha
+    container_name: concerts-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+    depends_on:
+      - mongodb
+    networks:
+      - concerts-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  concerts-network:
+    driver: bridge

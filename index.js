@@ -9,9 +9,25 @@ const Venue = require("./models/Venues")
 
 const app = express()
 app.use(express.json())
-app.use(cors());
+// Configure CORS to allow requests from your frontend
+app.use(cors({
+    origin: [
+        'http://localhost:3000',  // React default port
+        'http://localhost:3001',  // Same port (if frontend is on same port)
+        'http://localhost:5173',  // Vite default port
+        'http://localhost:4200',  // Angular default port
+        'http://127.0.0.1:3000',  // Alternative localhost format
+        'http://127.0.0.1:5173'   // Alternative localhost format
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-mongoose.connect("mongodb://localhost:27017/ConcertsAppDB")
+// Use environment variable for MongoDB connection or fallback to localhost
+const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/ConcertsAppDB"
+
+mongoose.connect(mongoUri)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
@@ -139,6 +155,7 @@ app.post("/createUser", (request, response) => {
         }));
 })
 
-app.listen(3001, () => {
-    console.log("Server is running on port 3001...")
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}...`)
 })
