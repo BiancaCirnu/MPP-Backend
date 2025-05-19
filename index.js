@@ -11,17 +11,9 @@ const app = express()
 app.use(express.json())
 // Configure CORS to allow requests from your frontend
 app.use(cors({
-    origin: [
-        'http://localhost:3000',  // React default port
-        'http://localhost:3001',  // Same port (if frontend is on same port)
-        'http://localhost:5173',  // Vite default port
-        'http://localhost:4200',  // Angular default port
-        'http://127.0.0.1:3000',  // Alternative localhost format
-        'http://127.0.0.1:5173'   // Alternative localhost format
-    ],
-    credentials: true,
+    origin:  "*",
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: "*"
 }));
 
 // Use environment variable for MongoDB connection or fallback to localhost
