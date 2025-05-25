@@ -7,7 +7,6 @@ const VenueSchema = new mongoose.Schema({
     },
     Address: {
         type: String, 
-        unique: true
     },
     City: {
         type: String, 

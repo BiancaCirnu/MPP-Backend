@@ -22,7 +22,7 @@ const seedDB = async () => {
 
     // Seed Artists
     const artists = [];
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 100; i++) {
       sleep(1);
       artists.push(await Artist.create({
         Name: faker.music.songName() + " " + faker.person.lastName(),
@@ -33,7 +33,7 @@ const seedDB = async () => {
 
     // Seed Venues
     const venues = [];
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 100; i++) {
       sleep(1);
       venues.push(await Venue.create({
         Name: faker.company.name() + " Arena",
@@ -44,7 +44,7 @@ const seedDB = async () => {
     }
 
     // Seed Concerts
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 100; i++) {
       sleep(1);
       const artist = faker.helpers.arrayElement(artists);
       const venue = faker.helpers.arrayElement(venues);
