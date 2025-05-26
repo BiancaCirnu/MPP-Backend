@@ -11,8 +11,8 @@ const app = express()
 app.use(express.json())
 // Configure CORS to allow requests from your frontend
 app.use(cors({
-     origin:  "*",
-    //origin: ["http://localhost:5173", "http://172.26.128.1:5173/"],
+    //origin:  "*",
+    origin: ["http://localhost:5173", "http://172.26.128.1:5173/"],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: "*"
 }));
