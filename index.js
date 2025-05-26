@@ -16,13 +16,48 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: "*"
 }));
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Concerts API is running!',
+    endpoints: {
+      concerts: ['/getConcerts', '/createConcert', '/getConcert/:id', '/updateConcert/:id', '/deleteConcert/:id'],
+      artists: ['/getArtists', '/createArtist', '/getArtist/:id', '/updateArtist/:id', '/deleteArtist/:id'],
+      venues: ['/getVenues', '/createVenue', '/getVenue/:id', '/updateVenue/:id', '/deleteVenue/:id'],
+      users: ['/createUser']
+    }
+  });
+});
 
 // Use environment variable for MongoDB connection or fallback to localhost
 const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/ConcertsAppDB"
 
-mongoose.connect(mongoUri)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB connection error:", err));
+// Replace your current mongoose.connect with this:
+let cachedConnection = null;
+
+async function connectToDatabase() {
+  if (cachedConnection) {
+    return cachedConnection;
+  }
+  
+  try {
+    const connection = await mongoose.connect(mongoUri, {
+      bufferCommands: false,
+      maxPoolSize: 1
+    });
+    cachedConnection = connection;
+    console.log("Connected to MongoDB");
+    return connection;
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    throw err;
+  }
+}
+
+// Call this in each route handler or use middleware
+app.use(async (req, res, next) => {
+  await connectToDatabase();
+  next();
+});
 
 // manage concerts
 app.post("/createConcert", (request, response) => {
@@ -152,3 +187,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}...`)
 })
+
+module.exports = app; 
